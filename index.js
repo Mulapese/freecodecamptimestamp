@@ -24,7 +24,29 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+app.get("/api", (req, res) => {
+  let dateReq = Date.now();
+  let unix = Number(dateReq);
+  let utc = new Date(Number(dateReq)).toGMTString();
+  res.json({unix: unix, utc: utc})
+})
 
+app.get("/api/:date", (req, res) => {
+  let dateReq = req.params.date;
+  let unix;
+  let utc;
+  if (!Number.isFinite(Number(dateReq))) {
+    unix = Math.floor(new Date(dateReq).getTime());
+    utc = new Date(dateReq).toGMTString(); 
+  } else {
+    unix = Number(dateReq);
+    utc = new Date(Number(dateReq)).toGMTString(); 
+  }
+  if (utc == "Invalid Date") {
+    res.json({ error : "Invalid Date" })
+  }
+  res.json({unix: unix, utc: utc})
+});
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
